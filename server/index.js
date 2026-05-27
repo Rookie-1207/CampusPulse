@@ -6,12 +6,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const notices = [
+  {
+    title: "Mid Semester Exam Schedule Released",
+    category: "Academics",
+    date: "27 May 2026",
+  },
+  {
+    title: "Coding Club Orientation This Friday",
+    category: "Clubs",
+    date: "29 May 2026",
+  }
+];
+
 app.get("/", (req, res) => {
-  res.status(200).send("CampusPulse API running");
+  res.send("CampusPulse API running");
 });
 
-const PORT = 5000;
+app.get("/api/notices", (req, res) => {
+  res.json(notices);
+});
 
-app.listen(PORT, "127.0.0.1", () => {
-  console.log(`Server started on http://127.0.0.1:${PORT}`);
+app.listen(5050, () => {
+  console.log("Server started on port 5050");
 });
