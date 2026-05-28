@@ -1,10 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-mongoose.connect(
-  "mongodb+srv://campuspulseUser:User%401207Pulse@campuspulse.qgdpjxy.mongodb.net/?appName=CampusPulse"
-)
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected"))
 .catch((err) => console.log(err));
 
