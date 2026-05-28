@@ -1,5 +1,12 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+mongoose.connect(
+  "mongodb+srv://campuspulseUser:User%401207Pulse@campuspulse.qgdpjxy.mongodb.net/?appName=CampusPulse"
+)
+.then(() => console.log("MongoDB Connected"))
+.catch((err) => console.log(err));
 
 const app = express();
 
@@ -50,3 +57,6 @@ app.delete("/api/notices/:index", (req, res) => {
 app.listen(5050, () => {
   console.log("Server started on port 5050");
 });
+
+
+
