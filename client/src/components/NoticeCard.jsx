@@ -1,19 +1,43 @@
-function NoticeCard({ notice, index, deleteNotice }) {
+import { useState } from "react";
+
+function NoticeCard({ notice, deleteNotice, updateNotice }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(notice.title);
+  const [editCategory, setEditCategory] = useState(notice.category);
+
+  const handleUpdate = () => {
+    updateNotice(notice._id, editTitle, editCategory);
+    setIsEditing(false);
+  };
+
   return (
     <div className="notice-card">
+      {isEditing ? (
+        <>
+          <input
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+          />
 
-      <h3>{notice.title}</h3>
+          <input
+            value={editCategory}
+            onChange={(e) => setEditCategory(e.target.value)}
+          />
 
-      <p>{notice.category}</p>
+          <button onClick={handleUpdate}>Save</button>
+          <button onClick={() => setIsEditing(false)}>Cancel</button>
+        </>
+      ) : (
+        <>
+          <h3>{notice.title}</h3>
+          <p>{notice.category}</p>
+          <small>{notice.date}</small>
+          <br />
 
-      <small>{notice.date}</small>
-
-      <br />
-
-      <button onClick={() => deleteNotice(index)}>
-        Delete
-      </button>
-
+          <button onClick={() => setIsEditing(true)}>Edit</button>
+          <button onClick={() => deleteNotice(notice._id)}>Delete</button>
+        </>
+      )}
     </div>
   );
 }

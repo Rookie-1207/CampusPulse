@@ -8,6 +8,9 @@ function App() {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [searchTerm, setSearchTerm] = useState("");
+const [selectedCategory, setSelectedCategory] = useState("All");
+
   useEffect(() => {
     fetch("http://127.0.0.1:5050/api/notices")
       .then((response) => response.json())
@@ -47,15 +50,45 @@ function App() {
     setCategory("");
   };
 
-  const deleteNotice = async (index) => {
-    await fetch(`http://127.0.0.1:5050/api/notices/${index}`, {
-      method: "DELETE",
-    });
+  const deleteNotice = async (id) => {
+  await fetch(`http://127.0.0.1:5050/api/notices/${id}`, {
+    method: "DELETE",
+  });
 
-    const updatedNotices = notices.filter((_, i) => i !== index);
-    setNotices(updatedNotices);
-  };
+  const updatedNotices = notices.filter((notice) => notice._id !== id);
+  setNotices(updatedNotices);
+};
+const updateNotice = async (id, updatedTitle, updatedCategory) => {
+  const response = await fetch(`http://127.0.0.1:5050/api/notices/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: updatedTitle,
+      category: updatedCategory,
+    }),
+  });
 
+  const updatedNotice = await response.json();
+
+  const updatedNotices = notices.map((notice) =>
+    notice._id === id ? updatedNotice : notice
+  );
+
+  setNotices(updatedNotices);
+};
+
+const filteredNotices = notices.filter((notice) => {
+  const matchesSearch = notice.title
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+  const matchesCategory =
+    selectedCategory === "All" || notice.category === selectedCategory;
+
+  return matchesSearch && matchesCategory;
+});
   return (
     <div className="app">
       <div className="navbar">
@@ -64,6 +97,26 @@ function App() {
       </div>
 
       <div className="notice-form">
+
+        <div className="filter-section">
+  <input
+    type="text"
+    placeholder="Search notices..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+
+  <select
+    value={selectedCategory}
+    onChange={(e) => setSelectedCategory(e.target.value)}
+  >
+    <option value="All">All</option>
+    <option value="Academics">Academics</option>
+    <option value="Clubs">Clubs</option>
+    <option value="Events">Events</option>
+    <option value="Urgent">Urgent</option>
+  </select>
+</div>
         <input
           type="text"
           placeholder="Notice title"
@@ -88,13 +141,14 @@ function App() {
       {!loading && notices.length === 0 && <p>No notices available</p>}
 
       <div className="notice-container">
-        {notices.map((notice, index) => (
-          <NoticeCard
-            key={index}
-            notice={notice}
-            index={index}
-            deleteNotice={deleteNotice}
-          />
+        {filteredNotices.map((notice) => (
+
+      <NoticeCard
+  key={notice._id}
+  notice={notice}
+  deleteNotice={deleteNotice}
+  updateNotice={updateNotice}
+/>
         ))}
       </div>
     </div>

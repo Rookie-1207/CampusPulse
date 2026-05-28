@@ -59,6 +59,23 @@ app.delete("/api/notices/:id", async (req, res) => {
   }
 });
 
+app.put("/api/notices/:id", async (req, res) => {
+  try {
+    const updatedNotice = await Notice.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title,
+        category: req.body.category,
+      },
+      { new: true }
+    );
+
+    res.json(updatedNotice);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating notice" });
+  }
+});
+
 app.listen(5050, () => {
   console.log("Server started on port 5050");
 });
