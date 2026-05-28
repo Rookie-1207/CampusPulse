@@ -30,7 +30,13 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
       ) : (
         <>
           <h3>{notice.title}</h3>
-          <p>{notice.category}</p>
+          <p
+  className={`category-badge ${
+    notice.category.toLowerCase()
+  }`}
+>
+  {notice.category}
+</p>
           <small>{notice.date}</small>
           <br />
 

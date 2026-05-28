@@ -1,6 +1,9 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
 import NoticeCard from "./components/NoticeCard";
 import "./App.css";
+
 
 function App() {
   const [notices, setNotices] = useState([]);
@@ -48,6 +51,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
     setNotices([...notices, savedNotice]);
     setTitle("");
     setCategory("");
+    toast.success("Notice added successfully!");
   };
 
   const deleteNotice = async (id) => {
@@ -57,6 +61,7 @@ const [selectedCategory, setSelectedCategory] = useState("All");
 
   const updatedNotices = notices.filter((notice) => notice._id !== id);
   setNotices(updatedNotices);
+  toast.error("Notice deleted");
 };
 const updateNotice = async (id, updatedTitle, updatedCategory) => {
   const response = await fetch(`http://127.0.0.1:5050/api/notices/${id}`, {
@@ -77,6 +82,7 @@ const updateNotice = async (id, updatedTitle, updatedCategory) => {
   );
 
   setNotices(updatedNotices);
+  toast.info("Notice updated");
 };
 
 const filteredNotices = notices.filter((notice) => {
@@ -151,6 +157,7 @@ const filteredNotices = notices.filter((notice) => {
 />
         ))}
       </div>
+      <ToastContainer />
     </div>
   );
 }
