@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   getNotices,
   addNotice,
@@ -6,11 +7,19 @@ const {
   deleteNotice,
 } = require("../controllers/noticeController");
 
+const {
+  verifyToken,
+  adminOnly,
+} = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
 router.get("/", getNotices);
-router.post("/", addNotice);
-router.put("/:id", updateNotice);
-router.delete("/:id", deleteNotice);
+
+router.post("/", verifyToken, adminOnly, addNotice);
+
+router.put("/:id", verifyToken, adminOnly, updateNotice);
+
+router.delete("/:id", verifyToken, adminOnly, deleteNotice);
 
 module.exports = router;

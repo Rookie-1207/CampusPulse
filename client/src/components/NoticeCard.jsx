@@ -5,6 +5,8 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
   const [editTitle, setEditTitle] = useState(notice.title);
   const [editCategory, setEditCategory] = useState(notice.category);
 
+  const role = localStorage.getItem("role");
+
   const handleUpdate = () => {
     updateNotice(notice._id, editTitle, editCategory);
     setIsEditing(false);
@@ -31,9 +33,7 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
         <>
           <h3>{notice.title}</h3>
 
-          <p
-            className={`category-badge ${notice.category.toLowerCase()}`}
-          >
+          <p className={`category-badge ${notice.category.toLowerCase()}`}>
             {notice.category}
           </p>
 
@@ -45,24 +45,25 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
                   year: "numeric",
                   hour: "numeric",
                   minute: "2-digit",
-                  second: "2-digit",
                 })
               : "Date not available"}
           </p>
 
-          <button onClick={() => setIsEditing(true)}>
-            Edit
-          </button>
+          {role === "admin" && (
+            <>
+              <button onClick={() => setIsEditing(true)}>Edit</button>
 
-          <button
-  onClick={() => {
-    if (window.confirm("Are you sure you want to delete this notice?")) {
-      deleteNotice(notice._id);
-    }
-  }}
->
-  Delete
-</button>
+              <button
+                onClick={() => {
+                  if (window.confirm("Delete this notice?")) {
+                    deleteNotice(notice._id);
+                  }
+                }}
+              >
+                Delete
+              </button>
+            </>
+          )}
         </>
       )}
     </div>
