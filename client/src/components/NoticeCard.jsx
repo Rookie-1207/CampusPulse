@@ -30,18 +30,33 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
       ) : (
         <>
           <h3>{notice.title}</h3>
-          <p
-  className={`category-badge ${
-    notice.category.toLowerCase()
-  }`}
->
-  {notice.category}
-</p>
-          <small>{notice.date}</small>
-          <br />
 
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={() => deleteNotice(notice._id)}>Delete</button>
+          <p
+            className={`category-badge ${notice.category.toLowerCase()}`}
+          >
+            {notice.category}
+          </p>
+
+          <p className="notice-time">
+            {notice.createdAt
+              ? new Date(notice.createdAt).toLocaleString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+              : "Date not available"}
+          </p>
+
+          <button onClick={() => setIsEditing(true)}>
+            Edit
+          </button>
+
+          <button onClick={() => deleteNotice(notice._id)}>
+            Delete
+          </button>
         </>
       )}
     </div>
