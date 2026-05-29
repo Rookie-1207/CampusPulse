@@ -22,6 +22,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/notices", noticeRoutes);
 
-app.listen(5050, () => {
-  console.log("Server started on port 5050");
+const PORT = process.env.PORT || 5050;
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
