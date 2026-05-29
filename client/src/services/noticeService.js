@@ -1,5 +1,9 @@
 const API_URL = "https://campuspulse-vhol.onrender.com/api/notices";
 
+const getToken = () => {
+  return localStorage.getItem("token");
+};
+
 export const getNotices = async () => {
   const response = await fetch(API_URL);
   return response.json();
@@ -10,6 +14,7 @@ export const addNoticeAPI = async (notice) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(notice),
   });
@@ -22,6 +27,7 @@ export const updateNoticeAPI = async (id, notice) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(notice),
   });
@@ -32,6 +38,9 @@ export const updateNoticeAPI = async (id, notice) => {
 export const deleteNoticeAPI = async (id) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
   });
 
   return response.json();

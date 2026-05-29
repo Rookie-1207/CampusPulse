@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import NoticeCard from "./components/NoticeCard";
 import "./App.css";
+import Login from "./pages/Login";
 
 import {
   getNotices,
@@ -16,9 +17,14 @@ function App() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
+  const name = localStorage.getItem("name");
+const role = localStorage.getItem("role");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isLoggedIn, setIsLoggedIn] = useState(
+  localStorage.getItem("token") ? true : false
+);
 
   useEffect(() => {
     getNotices()
@@ -85,12 +91,27 @@ function App() {
 
     return matchesSearch && matchesCategory;
   });
-
+  if (!isLoggedIn) {
+  return <Login setIsLoggedIn={setIsLoggedIn} />;
+}
   return (
     <div className="app">
       <div className="navbar">
-        <h1 className="logo">CampusPulse 🎓</h1>
+        <h1 className="logo">CampusPulse </h1>
         <p>SRM Student Dashboard</p>
+        <button
+  onClick={() => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+  }}
+  
+>
+  <div className="user-info">
+  <span>👤 {name}</span>
+  <span>{role}</span>
+</div>
+  Logout
+</button>
       </div>
 
       <div className="filter-section">

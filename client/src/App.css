@@ -109,3 +109,18 @@ button:hover {
 .category-badge.other {
   background-color: gray;
 }
+
+.user-info {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: bold;
+}
+
+.user-info span:last-child {
+  background-color: #2563eb;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
