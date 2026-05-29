@@ -1,9 +1,15 @@
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import NoticeCard from "./components/NoticeCard";
 import "./App.css";
 
+import {
+  getNotices,
+  addNoticeAPI,
+  updateNoticeAPI,
+  deleteNoticeAPI,
+} from "./services/noticeService";
 
 function App() {
   const [notices, setNotices] = useState([]);
@@ -12,11 +18,10 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
-const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5050/api/notices")
-      .then((response) => response.json())
+    getNotices()
       .then((data) => {
         setNotices(data);
         setLoading(false);
@@ -33,68 +38,53 @@ const [selectedCategory, setSelectedCategory] = useState("All");
       return;
     }
 
-    const newNotice = {
+    const savedNotice = await addNoticeAPI({
       title,
       category,
-    };
-
-    const response = await fetch("http://127.0.0.1:5050/api/notices", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newNotice),
     });
 
-    const savedNotice = await response.json();
-
-    setNotices([...notices, savedNotice]);
+    setNotices([savedNotice, ...notices]);
     setTitle("");
     setCategory("");
+
     toast.success("Notice added successfully!");
   };
 
   const deleteNotice = async (id) => {
-  await fetch(`http://127.0.0.1:5050/api/notices/${id}`, {
-    method: "DELETE",
-  });
+    await deleteNoticeAPI(id);
 
-  const updatedNotices = notices.filter((notice) => notice._id !== id);
-  setNotices(updatedNotices);
-  toast.error("Notice deleted");
-};
-const updateNotice = async (id, updatedTitle, updatedCategory) => {
-  const response = await fetch(`http://127.0.0.1:5050/api/notices/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    const updatedNotices = notices.filter((notice) => notice._id !== id);
+    setNotices(updatedNotices);
+
+    toast.error("Notice deleted");
+  };
+
+  const updateNotice = async (id, updatedTitle, updatedCategory) => {
+    const updatedNotice = await updateNoticeAPI(id, {
       title: updatedTitle,
       category: updatedCategory,
-    }),
+    });
+
+    const updatedNotices = notices.map((notice) =>
+      notice._id === id ? updatedNotice : notice
+    );
+
+    setNotices(updatedNotices);
+
+    toast.info("Notice updated");
+  };
+
+  const filteredNotices = notices.filter((notice) => {
+    const matchesSearch = notice.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" || notice.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
   });
 
-  const updatedNotice = await response.json();
-
-  const updatedNotices = notices.map((notice) =>
-    notice._id === id ? updatedNotice : notice
-  );
-
-  setNotices(updatedNotices);
-  toast.info("Notice updated");
-};
-
-const filteredNotices = notices.filter((notice) => {
-  const matchesSearch = notice.title
-    .toLowerCase()
-    .includes(searchTerm.toLowerCase());
-
-  const matchesCategory =
-    selectedCategory === "All" || notice.category === selectedCategory;
-
-  return matchesSearch && matchesCategory;
-});
   return (
     <div className="app">
       <div className="navbar">
@@ -102,27 +92,27 @@ const filteredNotices = notices.filter((notice) => {
         <p>SRM Student Dashboard</p>
       </div>
 
+      <div className="filter-section">
+        <input
+          type="text"
+          placeholder="Search notices..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="All">All</option>
+          <option value="Academics">Academics</option>
+          <option value="Clubs">Clubs</option>
+          <option value="Events">Events</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+      </div>
+
       <div className="notice-form">
-
-        <div className="filter-section">
-  <input
-    type="text"
-    placeholder="Search notices..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-  />
-
-  <select
-    value={selectedCategory}
-    onChange={(e) => setSelectedCategory(e.target.value)}
-  >
-    <option value="All">All</option>
-    <option value="Academics">Academics</option>
-    <option value="Clubs">Clubs</option>
-    <option value="Events">Events</option>
-    <option value="Urgent">Urgent</option>
-  </select>
-</div>
         <input
           type="text"
           placeholder="Notice title"
@@ -148,15 +138,15 @@ const filteredNotices = notices.filter((notice) => {
 
       <div className="notice-container">
         {filteredNotices.map((notice) => (
-
-      <NoticeCard
-  key={notice._id}
-  notice={notice}
-  deleteNotice={deleteNotice}
-  updateNotice={updateNotice}
-/>
+          <NoticeCard
+            key={notice._id}
+            notice={notice}
+            deleteNotice={deleteNotice}
+            updateNotice={updateNotice}
+          />
         ))}
       </div>
+
       <ToastContainer />
     </div>
   );
