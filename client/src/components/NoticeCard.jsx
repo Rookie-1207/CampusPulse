@@ -54,9 +54,15 @@ function NoticeCard({ notice, deleteNotice, updateNotice }) {
             Edit
           </button>
 
-          <button onClick={() => deleteNotice(notice._id)}>
-            Delete
-          </button>
+          <button
+  onClick={() => {
+    if (window.confirm("Are you sure you want to delete this notice?")) {
+      deleteNotice(notice._id);
+    }
+  }}
+>
+  Delete
+</button>
         </>
       )}
     </div>

@@ -29,6 +29,7 @@ function App() {
       .catch((error) => {
         console.log(error);
         setLoading(false);
+        toast.error("Failed to load notices");
       });
   }, []);
 
@@ -130,11 +131,13 @@ function App() {
         <button onClick={addNotice}>Add Notice</button>
       </div>
 
-      <h2>Latest Notices</h2>
+      <h2>Latest Notices ({filteredNotices.length})</h2>
 
-      {loading && <p>Loading notices...</p>}
+      {loading && <div className="spinner"></div>}
 
-      {!loading && notices.length === 0 && <p>No notices available</p>}
+      {!loading && filteredNotices.length === 0 && (
+  <p className="empty-state"> No notices found</p>
+)}
 
       <div className="notice-container">
         {filteredNotices.map((notice) => (
